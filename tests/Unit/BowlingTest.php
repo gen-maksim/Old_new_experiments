@@ -8,23 +8,23 @@ use App\Bowling;
 
 class BowlingTest extends TestCase
 {
-    /**@test
-     * A basic test example.
-     *
-     * @return void
-     */
+
     public function test_that_it_can_add_score()
     {
         $bowling = new Bowling();
 
         $bowling->addShot(10);
+        $bowling->addShot(4);
+        $bowling->addShot(6);
+        $bowling->addShot(4);
+        $bowling->addShot(0);
         $bowling->addShot(10);
-        $bowling->addShot(10);
-        $bowling->addShot(1);
+        $bowling->addShot(7);
         $bowling->addShot(3);
-//        $bowling->addScore(2);
+        $bowling->addShot(10);
 
-        $this->assertEquals(69, $bowling->getScore());
+
+        $this->assertEquals(78, $bowling->getScore());
     }
 
     public function test_that_it_can_push_to_frame()
@@ -47,7 +47,7 @@ class BowlingTest extends TestCase
         $bowling->pushToFrame(10);
 
 
-        $this->assertEquals(false, $bowling->frameIsOpened());
+        $this->assertEquals(true, $bowling->frameIsOpened());
     }
 
     public function test_that_it_can_push_score_and_create_frame()
@@ -93,6 +93,27 @@ class BowlingTest extends TestCase
         $this->assertEquals(18, $bowling->getScore());
         $this->assertEquals([[
             'count' => 0,
+            'subtotal' => 18,
+        ]], $bowling->getStrikes());
+    }
+
+    public function test_that_it_can_count_spares()
+    {
+        $bowling = new Bowling();
+
+        $bowling->pushToSpare();
+        $bowling->checkStrike(5);
+
+        $this->assertEquals([[
+            'count' => 0,
+            'subtotal' => 15,
+        ]], $bowling->getStrikes());
+
+        $bowling->checkStrike(3);
+
+        $this->assertEquals(15, $bowling->getScore());
+        $this->assertEquals([[
+            'count' => -1,
             'subtotal' => 18,
         ]], $bowling->getStrikes());
     }
