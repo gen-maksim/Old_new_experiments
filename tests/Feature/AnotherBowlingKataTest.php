@@ -7,7 +7,6 @@ use Tests\TestCase;
 
 class AnotherBowlingKataTest extends TestCase
 {
-
     protected $game;
 
     public function setUp(): void
@@ -37,15 +36,15 @@ class AnotherBowlingKataTest extends TestCase
     }
 
     /**
-     * @param $pins
+     * @return int
      */
-    private function roll($pins): void
+    private function roll($pins)
     {
-        $this->game->roll($pins);
+        return $this->game->roll($pins);
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     private function score()
     {
@@ -53,7 +52,7 @@ class AnotherBowlingKataTest extends TestCase
     }
 
     /** @test */
-    public function it_scores_a_sum_of_all_knocked_down_pins_for_a_game()
+    public function it_scores_sum_of_all_knocked_down_pins_for_a_game()
     {
         $this->rollTimes(20, 1);
 
@@ -61,12 +60,14 @@ class AnotherBowlingKataTest extends TestCase
     }
 
     /** @test */
-    public function it_awards_a_one_roll_bouns_for_a_spare()
+    public function it_awards_a_one_roll_bonus_for_a_spare()
     {
         $this->rollSpare();
         $this->roll(5);
 
+
         $this->rollTimes(17, 0);
+
 
         $this->assertEquals(20, $this->score());
     }
@@ -74,15 +75,15 @@ class AnotherBowlingKataTest extends TestCase
     private function rollSpare(): void
     {
         $this->roll(2);
-        $this->roll(8);
+        $this->roll(8); //this is a spare
     }
 
     /** @test */
-    public function it_awars_a_two_roll_bonus_for_a_strike()
+    public function it_awards_a_two_roll_bonus_for_a_strike()
     {
-        $this->roll(10);
-        $this->roll(7);
+        $this->roll(10);//strike
         $this->roll(2);
+        $this->roll(7);
 
         $this->rollTimes(17, 0);
 
@@ -90,7 +91,7 @@ class AnotherBowlingKataTest extends TestCase
     }
 
     /** @test */
-    public function is_scores_a_perfect_game()
+    public function it_scores_a_perfect_game()
     {
         $this->rollTimes(12, 10);
 

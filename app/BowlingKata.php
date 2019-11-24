@@ -5,7 +5,15 @@ namespace App;
 
 class BowlingKata
 {
-    protected $rolls;
+
+    //10 frames
+    //1 or 2 shot per frame
+    //spare = 10 + next shot
+    //strike = 10 + next + next
+
+    protected $score;
+    protected $rolls = [];
+
 
     /**
      * @param $pins
@@ -25,10 +33,11 @@ class BowlingKata
 
         for ($frame = 0; $frame < 10; $frame++) {
             if ($this->isStrike($roll)) {
-                $score += 10 + $this->strikeBonus($roll);
+                $score += 10 + ($this->getStrikeBonus($roll));
+
                 $roll += 1;
             } elseif ($this->isSpare($roll)) {
-                $score += 10 + $this->spareBonus($roll);
+                $score += 10 + $this->getSpareBonus($roll);
                 $roll += 2;
             } else {
                 $score += $this->getDefaultFrameScore($roll);
@@ -50,11 +59,11 @@ class BowlingKata
 
     /**
      * @param int $roll
-     * @return mixed
+     * @return int
      */
-    private function strikeBonus(int $roll)
+    private function getStrikeBonus(int $roll): int
     {
-        return ($this->rolls[$roll + 1] + $this->rolls[$roll + 2]);
+        return $this->rolls[$roll + 1] + $this->rolls[$roll + 2];
     }
 
     /**
@@ -68,7 +77,7 @@ class BowlingKata
 
     /**
      * @param int $roll
-     * @return mixed
+     * @return int
      */
     private function getDefaultFrameScore(int $roll)
     {
@@ -77,10 +86,10 @@ class BowlingKata
 
     /**
      * @param int $roll
-     * @return mixed
+     * @return int
      */
-    private function spareBonus(int $roll)
+    private function getSpareBonus(int $roll): int
     {
-        return ($this->rolls[$roll + 2]);
+        return $this->rolls[$roll + 2];
     }
 }
