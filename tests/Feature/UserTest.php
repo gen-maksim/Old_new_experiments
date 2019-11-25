@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Training;
+use App\TrainingPlace;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -38,5 +39,27 @@ class UserTest extends TestCase
         $this->ivan->attend($training->pluck('id'));
 
         $this->assertEquals($training->pluck('id'), $this->ivan->trainings->pluck('id'));
+    }
+
+
+    /** @test */
+    public function it_can_see_all_trainings_in_specific_place()
+    {
+        $ivan = factory(User::class)->create();
+        $mark = factory(User::class)->create();
+        $climbing_jym = factory(TrainingPlace::class)->create();
+
+        $ivan_training = factory(Training::class)->create();
+        $mark_training = factory(Training::class)->create();
+
+        $ivan->attend($ivan_training);
+        $ivan_training->takePlace($climbing_jym->id);
+        $ivan_training->save();
+
+        $ivan->attend($mark_training);
+        $mark_training->takePlace($climbing_jym->id);
+        $mark_training->save();
+
+        $this->assertCount(2, $climbing_jym->trainings);
     }
 }

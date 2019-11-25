@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Training;
+use App\TrainingPlace;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,7 +20,7 @@ class TrainingTest extends TestCase
         $this->training = factory(Training::class)->create();
     }
 
-    //it really can involve them by its own???
+    //it really can involve users by its own???
     /** @test */
     public function it_can_involve_one_user()
     {
@@ -38,5 +39,24 @@ class TrainingTest extends TestCase
         $this->training->involve($party->pluck('id'));
 
         $this->assertEquals($party->pluck('name'), $this->training->participants->pluck('name'));
+    }
+
+    /** @test */
+    public function user_can_invite_a_friend_and_attend_a_training_in_a_specific_place()
+    {
+        $ivan = factory(User::class)->create();
+        $mark = factory(User::class)->create();
+        $climbing_jym = factory(TrainingPlace::class)->create();
+
+        //maybe $ivan->invite($mark, $training) is better...
+        $this->training->involve($mark->id);
+        $this->training->takePlace($climbing_jym->id);
+
+        $mark->attend($this->training);
+
+        $this->assertEquals($climbing_jym->name, $this->training->training_place->name);
+
+        $participants_id = $this->training->participants->pluck('id')->toArray();
+        $this->assertEmpty( array_diff($participants_id, [$ivan->id, $mark->id]));
     }
 }

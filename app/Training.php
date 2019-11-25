@@ -17,4 +17,14 @@ class Training extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function takePlace($place)
+    {
+        $this->training_place()->associate($place);
+    }
+
+    public function training_place()
+    {
+        return $this->belongsTo(TrainingPlace::class);
+    }
 }
