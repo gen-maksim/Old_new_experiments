@@ -36,4 +36,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function attend($training_ids)
+    {
+        $this->trainings()->attach($training_ids);
+    }
+
+    public function trainings()
+    {
+        return $this->belongsToMany(Training::class);
+    }
 }
