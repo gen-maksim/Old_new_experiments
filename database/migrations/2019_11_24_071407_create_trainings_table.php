@@ -19,6 +19,7 @@ class CreateTrainingsTable extends Migration
             $table->text('description')->nullable();
             $table->timestamp('start_datetime');
             $table->integer('duration_in_mins');
+            $table->integer('max_participants')->default(2);
             $table->integer('type')->default(1);
             $table->integer('training_place_id')->nullable();
             $table->timestamps();

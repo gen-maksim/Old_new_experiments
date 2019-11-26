@@ -35,6 +35,36 @@ class TrainingTest extends TestCase
     public function it_can_involve_multiple_users_at_once()
     {
         $party = factory(User::class, 2)->create();
+        $ivan = factory(User::class)->create();
+
+        $this->training->involve($party->pluck('id'));
+        $this->training->involve($ivan->id);
+
+        $this->assertEquals($party->pluck('name'), $this->training->participants->pluck('name'));
+    }
+
+    /** @test */
+    public function it_doesnt_allow_participant_overflow()
+    {
+        $training = factory(Training::class)->create( ['max_participants' => 2]);
+        $too_big_party = factory(User::class, 3)->create();
+        $training->involve($too_big_party->pluck('id'));
+
+        $this->assertEmpty($training->participants);
+
+        $party = factory(User::class, 2)->create();
+        $ivan = factory(User::class)->create();
+
+        $training->involve($party->pluck('id'));
+        $training->involve($ivan->id);
+
+        $this->assertEquals($party->pluck('name'), $training->participants->pluck('name'));
+    }
+
+    /** @test */
+    public function it_cant_involve_more_participants_than_maximum()
+    {
+        $party = factory(User::class, 2)->create();
 
         $this->training->involve($party->pluck('id'));
 
