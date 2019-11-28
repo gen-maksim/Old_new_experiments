@@ -12,7 +12,6 @@ class Training extends Model
     {
         if ($this->canInvolveThoseParticipants($user_id))
         {
-            dump($user_id);
             $this->participants()->attach($user_id);
         }
     }
@@ -35,10 +34,12 @@ class Training extends Model
     /**
      * @return bool
      */
-    private function canInvolveThoseParticipants($user_id): bool
+    private function canInvolveThoseParticipants($user_id)
     {
         $count = is_int($user_id) ? 1 : count($user_id);
-//        dump(($this->participants()->count() + $count) <= $this->max_participants);
-        return ($this->participants()->count() + $count) <= $this->max_participants;
+        $current_participants_count = $this->participants()->count();
+        $count_after_adding = $current_participants_count + $count;
+
+        return $count_after_adding <= $this->max_participants;
     }
 }

@@ -13,6 +13,7 @@ $factory->define(Training::class, function (Faker $faker) {
         'owner_id' => factory(User::class)->create()->id,
         'duration_in_mins' => 240,
         'start_datetime' => \Carbon\Carbon::now()->addDays(10),
+        'max_participants' => 100,
     ];
 });
 
