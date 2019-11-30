@@ -10,12 +10,15 @@ class BowlingKata
     //1 or 2 shot per frame 20 shots
     //spare = 10 + next shot
     //strike = 10 + next + next
-
-    private $rolls;
+    protected $rolls;
 
     public function roll($pins)
     {
-        $this->rolls[] = $pins;
+        if ($pins >= 0) {
+            $this->rolls[] = $pins;
+        } else {
+            $this->rolls[] = 0;
+        }
     }
 
     public function score()
@@ -23,35 +26,25 @@ class BowlingKata
         $score = 0;
         $roll = 0;
 
-        for ($frame = 0; $frame < 10; $frame++)
+        for ($i = 0; $i < 10; $i++)
         {
-            if($this->isStrike($roll))
-            {
-                $score += 10 + $this->addStrikeBonus($roll);
+            if ($this->isStrike($roll)) {
+                $score += $this->getStrikeBonusScore($roll);
                 $roll += 1;
             }
-
-            else if ($this->isSpare($roll))
+            elseif ($this->isSpare($roll))
             {
-                $score += 10 + $this->addSpareBonus($roll);
+                $score += $this->getSpareBonusScore($roll);
                 $roll += 2;
-            } else {
+            }
+            else
+            {
                 $score += $this->getDefaultFrameScore($roll);
                 $roll += 2;
             }
-
         }
 
         return $score;
-    }
-
-    /**
-     * @param int $roll
-     * @return bool
-     */
-    private function isSpare(int $roll): bool
-    {
-        return $this->rolls[$roll] + $this->rolls[$roll + 1] == 10;
     }
 
     /**
@@ -65,20 +58,11 @@ class BowlingKata
 
     /**
      * @param int $roll
-     * @return mixed
+     * @return bool
      */
-    private function addStrikeBonus(int $roll)
+    private function isSpare(int $roll): bool
     {
-        return ($this->rolls[$roll + 1] + $this->rolls[$roll + 2]);
-    }
-
-    /**
-     * @param int $roll
-     * @return mixed
-     */
-    private function addSpareBonus(int $roll)
-    {
-        return ($this->rolls[$roll + 2]);
+        return $this->rolls[$roll] + $this->rolls[$roll + 1] == 10;
     }
 
     /**
@@ -90,4 +74,21 @@ class BowlingKata
         return $this->rolls[$roll] + $this->rolls[$roll + 1];
     }
 
+    /**
+     * @param int $roll
+     * @return int
+     */
+    private function getSpareBonusScore(int $roll): int
+    {
+        return 10 + $this->rolls[$roll + 2];
+    }
+
+    /**
+     * @param int $roll
+     * @return int
+     */
+    private function getStrikeBonusScore(int $roll): int
+    {
+        return 10 + $this->rolls[$roll + 1] + $this->rolls[$roll + 2];
+    }
 }

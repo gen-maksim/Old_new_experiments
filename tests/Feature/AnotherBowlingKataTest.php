@@ -18,85 +18,88 @@ class AnotherBowlingKataTest extends TestCase
 
 
     /** @test */
-    public function it_scores_a_zero_game_as_a_gutter()
+    public function it_scores_zero_in_a_gutter_game()
     {
-        $this->rollTimes(20, 0);
+
+        for ($i = 0; $i < 20; $i++)
+        {
+            $this->game->roll(0);
+        }
 
         $this->assertEquals(0, $this->game->score());
     }
 
     /** @test */
-    public function it_scores_a_sum_of_knock_down_pins_for_a_game()
+    public function it_scores_a_sum_of_knocked_down_pins_in_a_game()
     {
-        $this->roll(2);
-        $this->roll(3);
-        $this->roll(5);
+        $this->game->roll(1);
+        $this->game->roll(5);
+        $this->game->roll(3);
+
 
         $this->rollTimes(17, 0);
 
-
-        $this->assertEquals(10, $this->game->score());
+        $this->assertEquals(9, $this->game->score());
     }
 
     /** @test */
-    public function it_awards_a_one_bonus_roll_for_a_spare()
+    public function is_awards_a_one_roll_bonus_for_a_spare()
     {
         $this->rollSpare();
-        $this->roll(5);
+        $this->game->roll(3);
+
 
         $this->rollTimes(17, 0);
 
-
-        $this->assertEquals(20, $this->game->score());
+        $this->assertEquals(16, $this->game->score());
     }
 
     /** @test */
-    public function it_awards_a_two_rolls_bonus_for_a_strike()
+    public function is_awards_a_two_rolls_bonus_for_a_strike()
     {
         $this->rollStrike();
-        $this->roll(3);
-        $this->roll(5);
+        $this->game->roll(5);
+        $this->game->roll(3);
+
 
         $this->rollTimes(17, 0);
-
 
         $this->assertEquals(26, $this->game->score());
     }
 
     /** @test */
-    public function it_scores_a_perfect_game()
+    public function is_scores_a_perfect_game()
     {
         $this->rollTimes(12, 10);
 
         $this->assertEquals(300, $this->game->score());
     }
 
-
-    private function roll($pins)
+    /** @test */
+    public function it_forbid_negative_rolls()
     {
-        return $this->game->roll($pins);
+        $this->game->roll(-10);
+
+        $this->rollTimes(19, 0);
+
+        $this->assertEquals(0, $this->game->score());
     }
 
-
-    /**
-     * @param $times
-     * @param $pins
-     */
     private function rollTimes($times, $pins)
     {
         for ($i = 0; $i < $times; $i++) {
-            $this->roll($pins);
+            $this->game->roll($pins);
         }
     }
 
-    private function rollSpare()
+    private function rollStrike(): void
     {
-        $this->roll(7);
-        $this->roll(3);
+        $this->game->roll(10);
     }
 
-    private function rollStrike()
+    private function rollSpare(): void
     {
-        $this->roll(10);
+        $this->game->roll(5);
+        $this->game->roll(5);//spare! 10 + 3 + 3
     }
 }
