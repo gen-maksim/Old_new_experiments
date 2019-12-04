@@ -31,6 +31,13 @@ class Training extends Model
         return $this->belongsTo(TrainingPlace::class);
     }
 
+    public function cancel()
+    {
+        $this->participants()->detach();
+
+        $this->delete();
+    }
+
     /**
      * @return bool
      */

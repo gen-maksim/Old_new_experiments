@@ -15,6 +15,7 @@ Route::get('/', 'HomeController@welcome');
 
 Auth::routes();
 
-Route::resource('training', 'TrainingController');
+
+Route::resource('trainings', 'TrainingController');
 
 Route::get('/home', 'HomeController@index')->name('home');
