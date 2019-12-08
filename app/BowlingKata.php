@@ -3,6 +3,8 @@
 namespace App;
 
 
+use Exception;
+
 class BowlingKata
 {
 
@@ -14,11 +16,9 @@ class BowlingKata
 
     public function roll($pins)
     {
-        if ($pins >= 0) {
-            $this->rolls[] = $pins;
-        } else {
-            $this->rolls[] = 0;
-        }
+        $this->guardAgainstInvalidPins($pins);
+
+        $this->rolls[] = $pins;
     }
 
     public function score()
@@ -26,15 +26,17 @@ class BowlingKata
         $score = 0;
         $roll = 0;
 
-        for ($i = 0; $i < 10; $i++)
+        for ($frame = 0; $frame < 10; $frame++)
         {
-            if ($this->isStrike($roll)) {
-                $score += $this->getStrikeBonusScore($roll);
+            if ($this->isStrike($roll))
+            {
+                $score += $this->getStrikeScore($roll);
+
                 $roll += 1;
             }
             elseif ($this->isSpare($roll))
             {
-                $score += $this->getSpareBonusScore($roll);
+                $score += $this->getSpareScore($roll);
                 $roll += 2;
             }
             else
@@ -42,18 +44,10 @@ class BowlingKata
                 $score += $this->getDefaultFrameScore($roll);
                 $roll += 2;
             }
+
         }
 
         return $score;
-    }
-
-    /**
-     * @param int $roll
-     * @return bool
-     */
-    private function isStrike(int $roll): bool
-    {
-        return $this->rolls[$roll] == 10;
     }
 
     /**
@@ -67,6 +61,15 @@ class BowlingKata
 
     /**
      * @param int $roll
+     * @return int
+     */
+    private function getSpareScore(int $roll): int
+    {
+        return 10 + $this->rolls[$roll + 2];
+    }
+
+    /**
+     * @param int $roll
      * @return mixed
      */
     private function getDefaultFrameScore(int $roll)
@@ -76,19 +79,31 @@ class BowlingKata
 
     /**
      * @param int $roll
-     * @return int
+     * @return bool
      */
-    private function getSpareBonusScore(int $roll): int
+    private function isStrike(int $roll): bool
     {
-        return 10 + $this->rolls[$roll + 2];
+        return $this->rolls[$roll] == 10;
     }
 
     /**
      * @param int $roll
      * @return int
      */
-    private function getStrikeBonusScore(int $roll): int
+    private function getStrikeScore(int $roll): int
     {
         return 10 + $this->rolls[$roll + 1] + $this->rolls[$roll + 2];
     }
+
+    /**
+     * @param $pins
+     */
+    private function guardAgainstInvalidPins($pins): void
+    {
+        if ($pins < 0 or $pins > 10) {
+            throw new Exception();
+        }
+    }
+
+
 }
