@@ -36,17 +36,17 @@ class TrainingController extends Controller
     public function store(Request $request)
     {
         Training::create($request->all());
+
+        return response()->json('success');
     }
 
+
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Training $training
      */
-    public function show($id)
+    public function show(Training $training)
     {
-        //
+        //dd($training->duration_in_mins);
     }
 
     /**
@@ -72,14 +72,11 @@ class TrainingController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy(Training $training)
     {
-        //
+        dd($training);
+        $training->cancel();
+
+        return response('success');
     }
 }
