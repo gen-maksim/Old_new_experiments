@@ -17,7 +17,7 @@ class TrainingRequestTest extends TestCase
 
         $training_duration = $this->faker()->numberBetween(120, 600);
 
-        $this->post(route('training.store'), [
+        $this->post(route('trainings.store'), [
             'owner_id' => $user->id,
             'duration_in_mins' => $training_duration,
             'start_datetime' => \Carbon\Carbon::now()->addDays(5),
@@ -42,25 +42,7 @@ class TrainingRequestTest extends TestCase
         $user->refresh();
         $this->assertEmpty($user->trainings, 'user has some trainings, but he should not');
     }
-//
-//    /** @test */
-//    public function user_can_update_a_training()
-//    {
-//        $user = factory(User::class)->create();
-//        $this->actingAs($user);
-//
-//        $training_duration = $this->faker()->numberBetween(120, 600);
-//
-//        $this->post(route('training.store'), [
-//            'owner_id' => $user->id,
-//            'duration_in_mins' => $training_duration,
-//            'start_datetime' => \Carbon\Carbon::now()->addDays(5),
-//            'max_participants' => 3,
-//        ])->assertSessionDoesntHaveErrors();
-//
-//        $this->assertDatabaseHas('trainings', ['duration_in_mins' => $training_duration]);
-//    }
-//
+
     /** @test */
     public function user_can_see_a_training()
     {
@@ -68,65 +50,20 @@ class TrainingRequestTest extends TestCase
         $this->actingAs($user);
 
         $training = factory(Training::class)->create(['owner_id' => $user->id]);
+        $user->attend($training);
 
+        $response = $this->get(route('trainings.show', $training->id));
 
-        $this->get(route('trainings.show', $training->id));
-
-
-        $this->assertDatabaseHas('trainings', ['duration_in_mins' => 240]);
+        $this->assertEquals($training->id, $response->json('data.training.id'));
     }
-//
-//    /** @test */
-//    public function user_can_see_all_trainings_created()
-//    {
-//        $user = factory(User::class)->create();
-//        $this->actingAs($user);
-//
-//        $training_duration = $this->faker()->numberBetween(120, 600);
-//
-//        $this->post(route('training.store'), [
-//            'owner_id' => $user->id,
-//            'duration_in_mins' => $training_duration,
-//            'start_datetime' => \Carbon\Carbon::now()->addDays(5),
-//            'max_participants' => 3,
-//        ])->assertSessionDoesntHaveErrors();
-//
-//        $this->assertDatabaseHas('trainings', ['duration_in_mins' => $training_duration]);
-//    }
-//
-//    /** @test */
-//    public function user_can_see_create_from_for_a_training()
-//    {
-//        $user = factory(User::class)->create();
-//        $this->actingAs($user);
-//
-//        $training_duration = $this->faker()->numberBetween(120, 600);
-//
-//        $this->post(route('training.store'), [
-//            'owner_id' => $user->id,
-//            'duration_in_mins' => $training_duration,
-//            'start_datetime' => \Carbon\Carbon::now()->addDays(5),
-//            'max_participants' => 3,
-//        ])->assertSessionDoesntHaveErrors();
-//
-//        $this->assertDatabaseHas('trainings', ['duration_in_mins' => $training_duration]);
-//    }
-//
-//    /** @test */
-//    public function user_can_see_edit_from_a_training()
-//    {
-//        $user = factory(User::class)->create();
-//        $this->actingAs($user);
-//
-//        $training_duration = $this->faker()->numberBetween(120, 600);
-//
-//        $this->post(route('training.store'), [
-//            'owner_id' => $user->id,
-//            'duration_in_mins' => $training_duration,
-//            'start_datetime' => \Carbon\Carbon::now()->addDays(5),
-//            'max_participants' => 3,
-//        ])->assertSessionDoesntHaveErrors();
-//
-//        $this->assertDatabaseHas('trainings', ['duration_in_mins' => $training_duration]);
-//    }
+
+    /** @test */
+    public function user_can_see_all_trinings()
+    {
+        $trainings = factory(Training::class, 10)->create();
+
+        $response = $this->get(route('trainings.index'));
+
+        $this->assertCount(10, $response->json('data.trainings'));
+    }
 }

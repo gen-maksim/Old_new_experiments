@@ -26,7 +26,7 @@ class UserTest extends TestCase
     {
         $training = factory(Training::class)->create();
 
-        $this->ivan->attend($training->id);
+        $this->ivan->attend($training);
 
         $this->assertEquals($training->id, $this->ivan->trainings->first()->id);
     }
@@ -36,7 +36,7 @@ class UserTest extends TestCase
     {
         $training = factory(Training::class, 2)->create();
 
-        $this->ivan->attend($training->pluck('id'));
+        $this->ivan->attend($training);
 
         $this->assertEquals($training->pluck('id'), $this->ivan->trainings->pluck('id'));
     }

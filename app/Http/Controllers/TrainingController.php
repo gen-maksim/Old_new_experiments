@@ -14,7 +14,11 @@ class TrainingController extends Controller
      */
     public function index()
     {
-        //
+        $trainings = Training::all();
+
+        return response([
+            'data' => compact('trainings'),
+        ]);
     }
 
     /**
@@ -24,7 +28,7 @@ class TrainingController extends Controller
      */
     public function create()
     {
-        //
+        //Here we will return view for training creation
     }
 
     /**
@@ -43,38 +47,18 @@ class TrainingController extends Controller
 
     /**
      * @param Training $training
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function show(Training $training)
     {
-        //dd($training->duration_in_mins);
+        return response([
+            'data' => compact('training'),
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
     public function destroy(Training $training)
     {
-        dd($training);
         $training->cancel();
 
         return response('success');
