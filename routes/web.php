@@ -18,4 +18,6 @@ Auth::routes();
 
 Route::resource('trainings', 'TrainingController');
 
+Route::get('/profile/{user}', 'UserController@profile')->name('user.profile');
+
 Route::get('/home', 'HomeController@index')->name('home');
