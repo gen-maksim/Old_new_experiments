@@ -17,67 +17,79 @@ class AnotherBowlingKataTest extends TestCase
         $this->game = new BowlingKata();
     }
 
+    /** @test */
+    public function it_scores_a_zero_for_a_gutter_game()
+    {
+        $this->rollTimes(20, 0);
 
-   /** @test */
-   public function it_scores_zero_for_a_gutter_game()
-   {
-       $this->rollTimes(20, 0);
-
-       $this->assertEquals(0, $this->score());
-   }
-
-
-   /** @test */
-   public function it_scores_a_sum_of_knocked_down_pins()
-   {
-       $this->roll(5);
-       $this->roll(4);
-       $this->roll(1);
-
-       $this->rollTimes(17, 0);
-
-       $this->assertEquals(10, $this->score());
-   }
+        $this->assertEquals(0, $this->score());
+    }
 
 
-   /** @test */
-   public function it_awards_a_one_roll_bonus_for_a_spare()
-   {
-       $this->roll(5);
-       $this->roll(5);//spare! 5+5+1+1
-       $this->roll(1);
+    /** @test */
+    public function it_scores_a_sum_of_knocked_down_pins_for_a_game()
+    {
+        $this->roll(1);
+        $this->roll(2);
+        $this->roll(3);
 
-       $this->rollTimes(17, 0);
+        $this->rollTimes(17, 0);
 
-       $this->assertEquals(12, $this->score());
-   }
-
-
-   /** @test */
-   public function it_awards_a_two_roll_bonus_for_a_strike()
-   {
-       $this->roll(10); //strike! 10 + 4 + 1 + 4 + 1
-       $this->roll(4);
-       $this->roll(1);
-
-       $this->rollTimes(17, 0);
-
-       $this->assertEquals(20, $this->score());
-   }
+        $this->assertEquals(6, $this->score());
+    }
 
 
-   /** @test */
-   public function it_ignore_non_valid_values()
-   {
-       $this->expectException(Exception::class);
-       $this->roll(-10);
-       $this->roll(5);
-       $this->roll(100);
 
-       $this->rollTimes(19, 0);
+    /** @test */
+    public function it_awards_a_one_roll_bonus_for_a_spare()
+    {
+        $this->rollSpare();
+        $this->roll(3);
 
-       $this->assertEquals(5, $this->score());
-   }
+        $this->rollTimes(17, 0);
+
+        $this->assertEquals(16, $this->score());
+    }
+
+
+    /** @test */
+    public function it_award_a_two_roll_bonus_for_a_strike()
+    {
+        $this->rollStrike();
+        $this->roll(4);
+        $this->roll(3);
+
+        $this->rollTimes(17, 0);
+
+        $this->assertEquals(24, $this->score());
+    }
+
+
+    /** @test */
+    public function it_scores_a_perfect_game()
+    {
+        $this->rollTimes(12, 10);
+
+        $this->assertEquals(300, $this->score());
+    }
+
+
+    /** @test */
+    public function it_skips_bad_pins_number()
+    {
+        $this->roll(3);
+        $this->roll(-10); //bad!
+        $this->roll(100); //bad!
+
+        $this->rollTimes(19, 0);
+
+        $this->assertEquals(3, $this->score());
+    }
+
+    //given 8 pins
+    //given 7 pins
+    //throw InvalidArgumentException
+    //result sum of a frame can't be greater than 10.
 
     private function roll($pins)
     {
@@ -94,5 +106,16 @@ class AnotherBowlingKataTest extends TestCase
         for ($i = 0; $i < $times; $i++) {
             $this->roll($pins);
         }
+    }
+
+    private function rollSpare(): void
+    {
+        $this->roll(4);
+        $this->roll(6);
+    }
+
+    private function rollStrike(): void
+    {
+        $this->roll(10);
     }
 }

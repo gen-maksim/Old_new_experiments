@@ -16,9 +16,10 @@ class BowlingKata
 
     public function roll($pins)
     {
-        $this->guardAgainstInvalidPins($pins);
-
-        $this->rolls[] = $pins;
+        if ($this->isValidPinsNumber($pins))
+        {
+            $this->rolls[] = $pins;
+        }
     }
 
     public function score()
@@ -34,7 +35,7 @@ class BowlingKata
 
                 $roll += 1;
             }
-            elseif ($this->isSpare($roll))
+            else if ($this->isSpare($roll))
             {
                 $score += $this->getSpareScore($roll);
                 $roll += 2;
@@ -44,7 +45,6 @@ class BowlingKata
                 $score += $this->getDefaultFrameScore($roll);
                 $roll += 2;
             }
-
         }
 
         return $score;
@@ -57,24 +57,6 @@ class BowlingKata
     private function isSpare(int $roll): bool
     {
         return $this->rolls[$roll] + $this->rolls[$roll + 1] == 10;
-    }
-
-    /**
-     * @param int $roll
-     * @return int
-     */
-    private function getSpareScore(int $roll): int
-    {
-        return 10 + $this->rolls[$roll + 2];
-    }
-
-    /**
-     * @param int $roll
-     * @return mixed
-     */
-    private function getDefaultFrameScore(int $roll)
-    {
-        return $this->rolls[$roll] + $this->rolls[$roll + 1];
     }
 
     /**
@@ -96,14 +78,29 @@ class BowlingKata
     }
 
     /**
-     * @param $pins
+     * @param int $roll
+     * @return int
      */
-    private function guardAgainstInvalidPins($pins): void
+    private function getSpareScore(int $roll): int
     {
-        if ($pins < 0 or $pins > 10) {
-            throw new Exception();
-        }
+        return 10 + $this->rolls[$roll + 2];
     }
 
+    /**
+     * @param int $roll
+     * @return mixed
+     */
+    private function getDefaultFrameScore(int $roll)
+    {
+        return $this->rolls[$roll] + $this->rolls[$roll + 1];
+    }
 
+    /**
+     * @param $pins
+     * @return bool
+     */
+    private function isValidPinsNumber($pins): bool
+    {
+        return $pins >= 0 and $pins < 11;
+    }
 }
