@@ -97,4 +97,33 @@ class TrainingTest extends TestCase
         $participants_id = $this->training->participants->pluck('id')->toArray();
         $this->assertEmpty( array_diff($participants_id, [$ivan->id, $mark->id]));
     }
+
+//    /** @test */
+//    public function user_can_ask_to_attend_training()
+//    {
+//        //given training with 1 of 2 participants
+//        $albert = factory(User::class)->create(['name' => 'Albert']);
+//        $training = factory(Training::class)->create([
+//            'owner_id' => $albert->id,
+//            'max_participants' => 2,
+//        ]);
+//
+//        $albert->attend($training);
+//
+//        //given user that want to attend this training
+//        $bob = factory(User::class)->create(['name' => 'Bob']);
+//
+//        //given training is not open for everyone
+//        //then bob asks owner about permission to enter
+//        $bob->applyFor($training);
+//
+//        //then owner gets bob's request
+//        $this->assertNotEmpty($albert->applications()->inbox()->get());
+//
+//        //then owner accepts bob's request
+//        $albert->applications()->inbox()->where('training_id', $training->id)->accept();
+//
+//        //then bob is in participants of the training
+//        $this->assertContains($bob->id, $training->participants->pluck('user_id'));
+//    }
 }

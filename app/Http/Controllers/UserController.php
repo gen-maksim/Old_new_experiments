@@ -11,4 +11,9 @@ class UserController extends Controller
     {
         return response($user);
     }
+
+    public function trainings(User $user)
+    {
+        return response(['trainings' => $user->trainings]);
+    }
 }

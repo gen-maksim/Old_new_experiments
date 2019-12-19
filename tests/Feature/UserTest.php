@@ -84,21 +84,20 @@ class UserTest extends TestCase
         $this->assertEquals($response->json('name'), $this->ivan->name);
     }
 
-//TODO:make this work
-//    /** @test */
-//    public function it_can_view_own_trainings()
-//    {
-//        //it includes trainings it participate and ones it creates (owns)
-//
-//        $user_created_trainings = factory(Training::class, 2)->create(['owner_id' => $this->ivan->id]);
-//
-//        $trainings_participated = factory(Training::class, 3)->create();
-//        $this->ivan->attend($trainings_participated->push($user_created_trainings->first()));
-//
-//        $other_trainings = factory(Training::class, 5)->create();
-//
-//        $response = $this->get(route('user.trainings'), $this->ivan->id)->assertSessionDoesntHaveErrors();
-//
-//        $this->assertEquals(5, $response->json()->count());
-//    }
+    /** @test */
+    public function it_can_view_own_trainings()
+    {
+        //it includes trainings it participate and ones it creates (owns)
+
+        $user_created_trainings = factory(Training::class, 2)->create(['owner_id' => $this->ivan->id]);
+
+        $trainings_participated = factory(Training::class, 3)->create();
+        $this->ivan->attend($trainings_participated->push($user_created_trainings->first()));
+
+        $other_trainings = factory(Training::class, 5)->create();
+
+        $response = $this->get(route('user.trainings', $this->ivan->id))->assertSessionDoesntHaveErrors();
+
+        $this->assertCount(4, $response->json('trainings'));
+    }
 }
