@@ -47,4 +47,21 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Training::class);
     }
+
+    public function establishedTrainings()
+    {
+        return $this->hasMany(Training::class, 'owner_id');
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(TrainingApplication::class);
+    }
+
+//    public function applicationInbox()
+//    {
+//        $applications = $this->establishedTrainings()->with('applications')->get()->pluck('applications');
+//
+//        return $applications;
+//    }
 }

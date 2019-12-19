@@ -3,10 +3,9 @@
 namespace Tests\Feature;
 
 use App\Training;
+use App\TrainingApplication;
 use App\TrainingPlace;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -100,4 +99,30 @@ class UserTest extends TestCase
 
         $this->assertCount(4, $response->json('trainings'));
     }
+
+    /** @test */
+    public function it_can_access_own_applications()
+    {
+        factory(TrainingApplication::class)->create(['user_id' => $this->ivan->id]);
+
+        $this->assertNotEmpty($this->ivan->applications);
+    }
+
+
+    /** @test */
+    public function it_can_see_trainings_it_owns()
+    {
+        factory(Training::class, 3)->create(['owner_id' => $this->ivan]);
+
+        $this->assertCount(3, $this->ivan->establishedTrainings);
+    }
+
+//    /** @test */
+//    public function it_can_access_application_inbox()
+//    {
+//        $training = factory(Training::class)->create(['owner_id' => $this->ivan->id]);
+//        factory(TrainingApplication::class)->create(['training_id' => $training->id]);
+//
+//        $this->assertNotEmpty($this->ivan->applicationInbox);
+//    }
 }
