@@ -58,10 +58,30 @@ class User extends Authenticatable
         return $this->hasMany(TrainingApplication::class);
     }
 
-//    public function applicationInbox()
-//    {
-//        $applications = $this->establishedTrainings()->with('applications')->get()->pluck('applications');
-//
-//        return $applications;
-//    }
+    public function applicationInbox()
+    {
+        $current_user_id = $this->id;
+        $applications = TrainingApplication::whereHas('training', function($q) use($current_user_id) {
+            return $q->where('owner_id', $current_user_id);
+        })->get();
+
+        return $applications;
+    }
+
+    public function confirm(TrainingApplication $application)
+    {
+        $application->training->involve($application->user->id);
+
+        return true;
+    }
+
+    public function applyFor(Training $training, $comment = '')
+    {
+        $application = $this->applications()->create([
+            'training_id' => $training->id,
+            'comment' => $comment,
+        ]);
+
+        return $application;
+    }
 }

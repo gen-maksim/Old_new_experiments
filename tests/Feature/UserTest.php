@@ -117,12 +117,23 @@ class UserTest extends TestCase
         $this->assertCount(3, $this->ivan->establishedTrainings);
     }
 
-//    /** @test */
-//    public function it_can_access_application_inbox()
-//    {
-//        $training = factory(Training::class)->create(['owner_id' => $this->ivan->id]);
-//        factory(TrainingApplication::class)->create(['training_id' => $training->id]);
-//
-//        $this->assertNotEmpty($this->ivan->applicationInbox);
-//    }
+    /** @test */
+    public function it_can_access_application_inbox()
+    {
+        $training = factory(Training::class)->create(['owner_id' => $this->ivan->id]);
+        factory(TrainingApplication::class)->create(['training_id' => $training->id]);
+
+        $this->assertNotEmpty($this->ivan->applicationInbox());
+    }
+
+    /** @test */
+    public function it_can_apply_for_a_training()
+    {
+        $bob = factory(User::class)->create();
+        $training = factory(Training::class)->create(['owner_id' => $this->ivan->id]);
+
+        $bob->applyFor($training, 'please, let me participate');
+
+        $this->assertEquals($training->id, $bob->applications->last()->training->id);
+    }
 }
