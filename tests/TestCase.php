@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -18,5 +19,10 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         Artisan::call("migrate");
+    }
+
+    protected function createUser($name)
+    {
+        return factory(User::class)->create(['name' => $name]);
     }
 }

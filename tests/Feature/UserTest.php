@@ -123,7 +123,7 @@ class UserTest extends TestCase
         $training = factory(Training::class)->create(['owner_id' => $this->ivan->id]);
         factory(TrainingApplication::class)->create(['training_id' => $training->id]);
 
-        $this->assertNotEmpty($this->ivan->applicationInbox());
+        $this->assertNotEmpty($this->ivan->fetchApplicationInbox());
     }
 
     /** @test */
@@ -135,5 +135,39 @@ class UserTest extends TestCase
         $bob->applyFor($training, 'please, let me participate');
 
         $this->assertEquals($training->id, $bob->applications->last()->training->id);
+    }
+
+    /** @test */
+    public function it_can_confirm_user_application()
+    {
+        $bob = $this->createUser('Bob');
+        $training = factory(Training::class)->create(['owner_id' => $this->ivan->id]);
+
+        $bob->applyFor($training, 'please, let me participate');
+
+        $this->assertCount(1, $this->ivan->fetchApplicationInbox());
+
+        $application = $this->ivan->fetchApplicationInbox()->first();
+        $this->ivan->confirm($application);
+
+        $this->assertEquals(2, $bob->applications()->first()->state);
+        $this->assertContains($bob->id, $training->participants()->get()->pluck('id'));
+    }
+
+    /** @test */
+    public function it_can_decline_user_application()
+    {
+        $bob = $this->createUser('Bob');
+        $training = factory(Training::class)->create(['owner_id' => $this->ivan->id]);
+
+        $bob->applyFor($training, 'please, let me participate');
+
+        $this->assertCount(1, $this->ivan->fetchApplicationInbox());
+
+        $application = $this->ivan->fetchApplicationInbox()->first();
+        $this->ivan->decline($application);
+
+        $this->assertEquals(3, $bob->applications()->first()->state);
+        $this->assertNotContains($bob->id, $training->participants()->get()->pluck('id'));
     }
 }

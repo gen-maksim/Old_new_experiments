@@ -19,6 +19,7 @@ class CreateTrainingUserTable extends Migration
             $table->integer('user_id');
             $table->integer('role')->default(1);
             $table->timestamps();
+            $table->unique(['training_id', 'user_id', 'role']);
         });
     }
 

@@ -24,6 +24,7 @@ class Training extends Model
     public function takePlace($place)
     {
         $this->training_place()->associate($place);
+        $this->save();
     }
 
     public function training_place()
@@ -43,6 +44,13 @@ class Training extends Model
      */
     private function canInvolveThoseParticipants($user_id)
     {
+        //check if any of them are already participate
+        $users = is_int($user_id) ? collect($user_id) : $user_id;
+        foreach ($users as $user) {
+            if ($this->participants()->where('user_id', $user)->count()) return false;
+        }
+
+        //check if there is a room for those people
         $count = is_int($user_id) ? 1 : count($user_id);
         $current_participants_count = $this->participants()->count();
         $count_after_adding = $current_participants_count + $count;

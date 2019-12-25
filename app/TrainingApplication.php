@@ -17,4 +17,17 @@ class TrainingApplication extends Model
     {
         return $this->belongsTo(Training::class);
     }
+
+    public function confirm()
+    {
+        $this->training->involve($this->user->id);
+        $this->state = 2;
+        $this->save();
+    }
+
+    public function decline()
+    {
+        $this->state = 3;
+        $this->save();
+    }
 }

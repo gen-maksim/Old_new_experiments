@@ -38,9 +38,18 @@ class User extends Authenticatable
     ];
 
 
-    public function attend($training_ids)
+    public function attend($trainings)
     {
-        $this->trainings()->attach($training_ids);
+        $trainings = collect($trainings);
+        if (!is_a($trainings->first(), Training::class))
+        {
+            $trainings = Training::find($trainings);
+
+        }
+
+        foreach ($trainings as $training) {
+            $training->involve($this->id);
+        }
     }
 
     public function trainings()
@@ -58,7 +67,7 @@ class User extends Authenticatable
         return $this->hasMany(TrainingApplication::class);
     }
 
-    public function applicationInbox()
+    public function fetchApplicationInbox()
     {
         $current_user_id = $this->id;
         $applications = TrainingApplication::whereHas('training', function($q) use($current_user_id) {
@@ -70,7 +79,14 @@ class User extends Authenticatable
 
     public function confirm(TrainingApplication $application)
     {
-        $application->training->involve($application->user->id);
+        $application->confirm();
+
+        return true;
+    }
+
+    public function decline(TrainingApplication $application)
+    {
+        $application->decline();
 
         return true;
     }

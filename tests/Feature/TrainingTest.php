@@ -82,20 +82,21 @@ class TrainingTest extends TestCase
     /** @test */
     public function user_can_invite_a_friend_and_attend_a_training_in_a_specific_place()
     {
-        $ivan = factory(User::class)->create();
-        $mark = factory(User::class)->create();
+        $ivan = $this->createUser('Ivan');
+        $mark = $this->createUser('Mark');
         $climbing_jym = factory(TrainingPlace::class)->create();
 
         //maybe $ivan->invite($mark, $training) is better...
         $this->training->involve($mark->id);
         $this->training->takePlace($climbing_jym->id);
 
-        $mark->attend($this->training);
+        $ivan->attend($this->training);
 
         $this->assertEquals($climbing_jym->name, $this->training->training_place->name);
 
         $participants_id = $this->training->participants->pluck('id')->toArray();
-        $this->assertEmpty( array_diff($participants_id, [$ivan->id, $mark->id]));
+
+        $this->assertEquals($participants_id, [$ivan->id, $mark->id]);
     }
 
 //    /** @test */
