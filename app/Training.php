@@ -8,6 +8,16 @@ class Training extends Model
 {
     protected $fillable = ['owner_id', 'max_participants', 'description', 'start_datetime', 'duration_in_mins', 'type', 'training_place_id'];
 
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::created(function ($training) {
+            $training->involve($training->owner_id);
+        });
+    }
+
+
     public function involve($user_id)
     {
         if ($this->canInvolveThoseParticipants($user_id))

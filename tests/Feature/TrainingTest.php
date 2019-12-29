@@ -28,7 +28,7 @@ class TrainingTest extends TestCase
 
         $this->training->involve($ivan->id);
 
-        $this->assertEquals($ivan->name, $this->training->participants->first()->name);
+        $this->assertContains($ivan->name, $this->training->participants->pluck('name'));
     }
 
     /** @test */
@@ -99,32 +99,34 @@ class TrainingTest extends TestCase
         $this->assertEquals($participants_id, [$ivan->id, $mark->id]);
     }
 
+    /** @test */
+    public function owner_become_a_participant_by_default()
+    {
+        $ivan = $this->createUser('Ivan');
+
+        $training = factory(Training::class)->create(['owner_id' => $ivan->id]);
+
+        $this->assertEquals($training->owner_id, $training->participants()->first()->id);
+    }
+
+
 //    /** @test */
-//    public function user_can_ask_to_attend_training()
+//    public function it_can_be_declined_by_user()
 //    {
-//        //given training with 1 of 2 participants
-//        $albert = factory(User::class)->create(['name' => 'Albert']);
-//        $training = factory(Training::class)->create([
-//            'owner_id' => $albert->id,
-//            'max_participants' => 2,
-//        ]);
+//        //given training with participants
+//        //then owner cancel training
+//        //all participants get notification
+//        //training become soft deleted
+//        //beware of relations (participants, applications, etc)
+//    }
 //
-//        $albert->attend($training);
 //
-//        //given user that want to attend this training
-//        $bob = factory(User::class)->create(['name' => 'Bob']);
-//
-//        //given training is not open for everyone
-//        //then bob asks owner about permission to enter
-//        $bob->applyFor($training);
-//
-//        //then owner gets bob's request
-//        $this->assertNotEmpty($albert->applications()->inbox()->get());
-//
-//        //then owner accepts bob's request
-//        $albert->applications()->inbox()->where('training_id', $training->id)->accept();
-//
-//        //then bob is in participants of the training
-//        $this->assertContains($bob->id, $training->participants->pluck('user_id'));
+//    /** @test */
+//    public function user_can_leave_training()
+//    {
+//        //given training with participants
+//        //then one participant leave
+//        //then all participants get notification
+//        //participant count decrease by 1
 //    }
 }
