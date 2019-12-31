@@ -28,7 +28,7 @@ class TrainingTest extends TestCase
 
         $this->training->involve($ivan->id);
 
-        $this->assertContains($ivan->name, $this->training->participants->pluck('name'));
+        $this->assertContains($ivan->name, $this->training->guests->pluck('name'));
     }
 
     /** @test */
@@ -40,7 +40,7 @@ class TrainingTest extends TestCase
         $this->training->involve($party->pluck('id'));
         $this->training->involve($ivan->id);
 
-        $this->assertEquals($party->push($ivan)->pluck('name'), $this->training->participants->pluck('name'));
+        $this->assertEquals($party->push($ivan)->pluck('name'), $this->training->guests->pluck('name'));
     }
 
     /** @test */
@@ -50,13 +50,14 @@ class TrainingTest extends TestCase
         $too_big_party = factory(User::class, 3)->create();
         $training->involve($too_big_party->pluck('id'));
 
-        $this->assertEmpty($training->participants);
+        $this->assertEmpty($training->guests);
     }
 
     /** @test */
     public function is_allows_to_add_exact_number_of_persons_and_forbid_even_single_person_after()
     {
-        $training = factory(Training::class)->create(['max_participants' => 2]);
+        //assuming there is already one participant (owner)
+        $training = factory(Training::class)->create(['max_participants' => 3]);
 
         $party = factory(User::class, 2)->create();
         $ivan = factory(User::class)->create();
@@ -66,7 +67,7 @@ class TrainingTest extends TestCase
         $training->involve($ivan->id);
         $training->involve($ivan->id);
 
-        $this->assertEquals($party->pluck('name'), $training->participants->pluck('name'));
+        $this->assertEquals($party->pluck('name'), $training->guests->pluck('name'));
     }
 
     /** @test */
@@ -76,7 +77,7 @@ class TrainingTest extends TestCase
 
         $this->training->involve($party->pluck('id'));
 
-        $this->assertEquals($party->pluck('name'), $this->training->participants->pluck('name'));
+        $this->assertEquals($party->pluck('name'), $this->training->guests->pluck('name'));
     }
 
     /** @test */
@@ -94,9 +95,10 @@ class TrainingTest extends TestCase
 
         $this->assertEquals($climbing_jym->name, $this->training->training_place->name);
 
-        $participants_id = $this->training->participants->pluck('id')->toArray();
+        $participants_id = $this->training->guests->pluck('id')->toArray();
 
-        $this->assertEquals($participants_id, [$ivan->id, $mark->id]);
+        $guys = array($ivan->id, $mark->id);
+        $this->assertTrue($participants_id == sort($guys));
     }
 
     /** @test */

@@ -33,6 +33,6 @@ class TrainingApplicationTest extends TestCase
 
         $ivan->confirm($application);
 
-        $this->assertContains($bob->id, $training->participants->pluck('id'));
+        $this->assertContains($bob->id, $training->guests->pluck('id'));
     }
 }

@@ -26,6 +26,11 @@ class Training extends Model
         }
     }
 
+    public function guests()
+    {
+        return $this->participants()->where('user_id', '!=', $this->owner_id);
+    }
+
     public function participants()
     {
         return $this->belongsToMany(User::class);

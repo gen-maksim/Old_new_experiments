@@ -91,13 +91,13 @@ class UserTest extends TestCase
         $user_created_trainings = factory(Training::class, 2)->create(['owner_id' => $this->ivan->id]);
 
         $trainings_participated = factory(Training::class, 3)->create();
-        $this->ivan->attend($trainings_participated->push($user_created_trainings->first()));
+        $this->ivan->attend($trainings_participated);
 
         $other_trainings = factory(Training::class, 5)->create();
 
         $response = $this->get(route('user.trainings', $this->ivan->id))->assertSessionDoesntHaveErrors();
 
-        $this->assertCount(4, $response->json('trainings'));
+        $this->assertCount(5, $response->json('trainings'));
     }
 
     /** @test */
@@ -151,7 +151,7 @@ class UserTest extends TestCase
         $this->ivan->confirm($application);
 
         $this->assertEquals(2, $bob->applications()->first()->state);
-        $this->assertContains($bob->id, $training->participants()->get()->pluck('id'));
+        $this->assertContains($bob->id, $training->guests()->get()->pluck('id'));
     }
 
     /** @test */
@@ -168,6 +168,6 @@ class UserTest extends TestCase
         $this->ivan->decline($application);
 
         $this->assertEquals(3, $bob->applications()->first()->state);
-        $this->assertNotContains($bob->id, $training->participants()->get()->pluck('id'));
+        $this->assertNotContains($bob->id, $training->guests()->get()->pluck('id'));
     }
 }
