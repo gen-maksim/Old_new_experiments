@@ -2,10 +2,16 @@
 
 namespace App;
 
+use App\Notifications\ParticipantLeft;
+use App\Notifications\TrainingWasCanceled;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Notification;
 
 class Training extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = ['owner_id', 'max_participants', 'description', 'start_datetime', 'duration_in_mins', 'type', 'training_place_id'];
 
     protected static function boot()
@@ -18,12 +24,32 @@ class Training extends Model
     }
 
 
+    /**
+     * @param array|int $user_id
+     * @return Training
+     */
     public function involve($user_id)
     {
         if ($this->canInvolveThoseParticipants($user_id))
         {
             $this->participants()->attach($user_id);
         }
+
+        return $this;
+    }
+
+    /**
+     * @param array|int $user_id
+     * @return Training
+     */
+    public function exclude($user_id)
+    {
+        $this->participants()->detach($user_id);
+
+        Notification::send($this->participants, new ParticipantLeft($user_id, $this));
+
+        return $this;
+
     }
 
     public function guests()
@@ -49,6 +75,7 @@ class Training extends Model
 
     public function cancel()
     {
+        Notification::send($this->guests, new TrainingWasCanceled($this));
         $this->participants()->detach();
 
         $this->delete();

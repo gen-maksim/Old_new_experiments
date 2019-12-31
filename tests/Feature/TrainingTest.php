@@ -5,8 +5,6 @@ namespace Tests\Feature;
 use App\Training;
 use App\TrainingPlace;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class TrainingTest extends TestCase
@@ -110,25 +108,4 @@ class TrainingTest extends TestCase
 
         $this->assertEquals($training->owner_id, $training->participants()->first()->id);
     }
-
-
-//    /** @test */
-//    public function it_can_be_declined_by_user()
-//    {
-//        //given training with participants
-//        //then owner cancel training
-//        //all participants get notification
-//        //training become soft deleted
-//        //beware of relations (participants, applications, etc)
-//    }
-//
-//
-//    /** @test */
-//    public function user_can_leave_training()
-//    {
-//        //given training with participants
-//        //then one participant leave
-//        //then all participants get notification
-//        //participant count decrease by 1
-//    }
 }

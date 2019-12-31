@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Notifications\ParticipantLeft;
+use App\Notifications\TrainingWasCanceled;
 use App\Training;
 use App\TrainingApplication;
 use App\TrainingPlace;
 use App\User;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -169,5 +172,57 @@ class UserTest extends TestCase
 
         $this->assertEquals(3, $bob->applications()->first()->state);
         $this->assertNotContains($bob->id, $training->guests()->get()->pluck('id'));
+    }
+
+
+    /** @test */
+    public function it_can_be_declined_by_user()
+    {
+        Notification::fake();
+
+        //given training with participants
+        $ivan = $this->createUser('Ivan');
+
+        $training = factory(Training::class)->create(['owner_id' => $ivan->id]);
+        $participants = factory(User::class, 4)->create();
+
+        $training->involve($participants->pluck('id'));
+
+        //then owner cancel training
+        $training->cancel();
+
+        //all guests get notification
+        Notification::assertSentTo($participants, TrainingWasCanceled::class);
+
+        //training become soft deleted
+        $this->assertSoftDeleted($training);
+        //beware of relations (participants, applications, etc)
+    }
+
+
+    /** @test */
+    public function user_can_leave_training()
+    {
+        Notification::fake();
+
+        //given training with participants
+        $ivan = $this->createUser('Ivan');
+
+        $training = factory(Training::class)->create(['owner_id' => $ivan->id]);
+        $participants = factory(User::class, 4)->create();
+
+        $training->involve($participants->pluck('id'));
+        $old_count = $training->participants()->count();
+
+        //then one participant leave
+        $leaver = $participants->first();
+
+        $training->exclude($leaver->id);
+
+        //then all participants get notification except the one who left
+        Notification::assertSentTo($training->participants()->where('user_id', '!=', $leaver->id)->get(), ParticipantLeft::class);
+
+        //participant count decrease by 1
+        $this->assertEquals($old_count - 1, $training->participants()->count());
     }
 }
