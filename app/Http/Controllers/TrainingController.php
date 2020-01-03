@@ -17,6 +17,7 @@ class TrainingController extends Controller
     public function index()
     {
         $trainings = Training::all();
+        $trainings->loadCount('applications');
 
         return view('trainings',
             compact('trainings')

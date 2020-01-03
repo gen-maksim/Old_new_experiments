@@ -8,7 +8,7 @@ class UserController extends Controller
 {
     public function profile(User $user)
     {
-        $user->load('trainings');
+        $user->load('trainings', 'applications');
         return view('profile', compact('user'));
     }
 

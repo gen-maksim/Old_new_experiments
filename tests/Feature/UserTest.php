@@ -83,7 +83,7 @@ class UserTest extends TestCase
 
         $response = $this->get(route('user.profile', $this->ivan->id))->assertSessionDoesntHaveErrors();
 
-        $this->assertEquals($response->json('name'), $this->ivan->name);
+        $this->assertEquals($response->viewData('user')['name'], $this->ivan->name);
     }
 
     /** @test */

@@ -26,6 +26,7 @@ class Training extends Model
     protected $attributes = [
         'max_participants' => 2,
     ];
+
     /**
      * @param array|int $user_id
      * @return Training
@@ -64,6 +65,11 @@ class Training extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function applications()
+    {
+        return $this->hasMany(TrainingApplication::class);
+    }
+
     public function takePlace($place)
     {
         $this->training_place()->associate($place);
@@ -86,6 +92,12 @@ class Training extends Model
         $this->participants()->detach();
 
         $this->delete();
+    }
+
+
+    public function canBeApplied()
+    {
+        return !$this->applications()->where('user_id', auth()->id())->exists();
     }
 
     /**

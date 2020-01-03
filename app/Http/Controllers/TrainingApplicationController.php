@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\TrainingApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TrainingApplicationController extends Controller
 {
@@ -35,7 +36,15 @@ class TrainingApplicationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+
+        $request->merge([
+            'user_id' => auth()->id(),
+        ]);
+        TrainingApplication::create($request->all());
+        DB::commit();
+
+        return back();
     }
 
     /**

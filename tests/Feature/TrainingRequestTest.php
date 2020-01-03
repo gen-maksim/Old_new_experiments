@@ -58,12 +58,12 @@ class TrainingRequestTest extends TestCase
     }
 
     /** @test */
-    public function user_can_see_all_trinings()
+    public function user_can_see_all_trainings()
     {
         $trainings = factory(Training::class, 10)->create();
 
         $response = $this->get(route('trainings.index'));
 
-        $this->assertCount(10, $response->json('data.trainings'));
+        $this->assertCount(10, $response->viewData('trainings'));
     }
 }

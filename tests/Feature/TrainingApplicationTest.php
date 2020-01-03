@@ -35,4 +35,20 @@ class TrainingApplicationTest extends TestCase
 
         $this->assertContains($bob->id, $training->guests->pluck('id'));
     }
+
+    /** @test */
+    public function it_indicates_when_user_has_an_application_for_a_training()
+    {
+        $bob = factory(User::class)->create();
+        $ivan = factory(User::class)->create();
+        $training = factory(Training::class)->create(['owner_id' => $ivan->id]);
+
+        //given bob applied for a training
+        $bob->applyFor($training, 'please, let me participate');
+
+        //then he can't apply once more
+        $this->actingAs($bob);
+        $training->refresh();
+        $this->assertFalse($training->canBeApplied());
+    }
 }

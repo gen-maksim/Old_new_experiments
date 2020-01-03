@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -93,11 +92,13 @@ class User extends Authenticatable
 
     public function applyFor(Training $training, $comment = '')
     {
-        $application = $this->applications()->create([
-            'training_id' => $training->id,
-            'comment' => $comment,
-        ]);
+        if ($training->canBeApplied()) {
+            $application = $this->applications()->create([
+                'training_id' => $training->id,
+                'comment' => $comment,
+            ]);
+        }
 
-        return $application;
+        return $application ?? false;
     }
 }
