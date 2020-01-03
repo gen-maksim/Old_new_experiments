@@ -23,7 +23,9 @@ class Training extends Model
         });
     }
 
-
+    protected $attributes = [
+        'max_participants' => 2,
+    ];
     /**
      * @param array|int $user_id
      * @return Training
@@ -70,7 +72,12 @@ class Training extends Model
 
     public function training_place()
     {
-        return $this->belongsTo(TrainingPlace::class);
+        return $this->belongsTo(TrainingPlace::class)->withDefault(new TrainingPlace());
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function cancel()

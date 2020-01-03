@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Training;
+use App\TrainingPlace;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TrainingController extends Controller
 {
@@ -16,9 +18,9 @@ class TrainingController extends Controller
     {
         $trainings = Training::all();
 
-        return response([
-            'data' => compact('trainings'),
-        ]);
+        return view('trainings',
+            compact('trainings')
+        );
     }
 
     /**
@@ -28,7 +30,8 @@ class TrainingController extends Controller
      */
     public function create()
     {
-        //Here we will return view for training creation
+        $training_places = TrainingPlace::all();
+        return view('trainings.create', compact('training_places'));
     }
 
     /**
@@ -39,9 +42,11 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-        Training::create($request->all());
+        DB::beginTransaction();
+        Training::create(array_merge($request->all(), ['owner_id' => auth()->id()]));
 
-        return response()->json('success');
+        DB::commit();
+        return redirect(route('user.profile', auth()->id()));
     }
 
 

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     public function profile(User $user)
     {
-        return response($user);
+        $user->load('trainings');
+        return view('profile', compact('user'));
     }
 
     public function trainings(User $user)
