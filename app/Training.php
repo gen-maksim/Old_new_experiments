@@ -70,6 +70,11 @@ class Training extends Model
         return $this->hasMany(TrainingApplication::class);
     }
 
+    public function active_applications()
+    {
+        return $this->applications()->where('state', 1);
+    }
+
     public function takePlace($place)
     {
         $this->training_place()->associate($place);
@@ -97,7 +102,7 @@ class Training extends Model
 
     public function canBeApplied()
     {
-        return !$this->applications()->where('user_id', auth()->id())->exists();
+        return !$this->applications()->where('user_id', auth()->id())->where('state', '!=', 3)->exists() and $this->owner_id != auth()->id();
     }
 
     /**

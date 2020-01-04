@@ -19,7 +19,7 @@
                                     <th>Скалодром</th>
                                     <th>Дата</th>
                                     <th>Создатель</th>
-                                    <th>Количество участников</th>
+                                    <th>Количество участников (заявок)</th>
                                     <th></th>
                                 </tr>
                                 @foreach($trainings as $training)
@@ -27,7 +27,7 @@
                                         <td>{{ $training->training_place->name }}</td>
                                         <td>{{ $training->start_datetime }}</td>
                                         <td>{{ $training->owner->name }}</td>
-                                        <td>{{ $training->participants()->count() . '/' . $training->max_participants . " ({$training->applications_count})" }}</td>
+                                        <td>{{ $training->participants()->count() . '/' . $training->max_participants . " ({$training->active_applications_count})" }}</td>
                                         <td>
                                             @if ($training->canBeApplied())
                                             <form method="post" action="{{ route('training_applications.store') }}">
@@ -36,7 +36,7 @@
                                                 <button class="btn-sm" type="submit">Подать заявку на участие</button>
                                             </form>
                                             @else
-                                                Ваша заявка рассматривается
+                                                Вы уже подавали заявку или являетесь создателем
                                             @endif
                                         </td>
                                     </tr>

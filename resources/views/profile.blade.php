@@ -36,7 +36,7 @@
                                     <td>{{ $training->training_place->name }}</td>
                                     <td>{{ $training->start_datetime }}</td>
                                     <td>{{ $training->owner->name }}</td>
-                                    <td>{{ $training->max_participants }}</td>
+                                    <td>{{ $training->participants()->count() . '/' . $training->max_participants }}</td>
                                 </tr>
                             @endforeach
                         </table>
@@ -69,6 +69,37 @@
                                     <td>{{ $application->training->start_datetime }}</td>
                                     <td>{{ $application->training->owner->name }}</td>
                                     <td>{{ $application->state_for_humans }}</td>
+                                </tr>
+                            @endforeach
+                        </table>
+
+                        <table border="1">
+                            <caption>Входящие заявки</caption>
+                            <tr>
+                                <th>Скалодром</th>
+                                <th>Дата</th>
+                                <th>Автор заявки</th>
+                                <th>Статус</th>
+                            </tr>
+                            @foreach($user->fetchApplicationInbox() as $application)
+                                <tr>
+                                    <td>{{ $application->training->training_place->name }}</td>
+                                    <td>{{ $application->training->start_datetime }}</td>
+                                    <td>{{ $application->user->name }}</td>
+                                    <td>
+                                        @if($application->state == 1)
+                                        <form method="post" action="{{ route('training_applications.confirm', $application->id) }}">
+                                            @csrf
+                                            <button class="btn btn-success">Принять</button>
+                                        </form>
+                                        <form method="post" action="{{ route('training_applications.decline', $application->id) }}">
+                                            @csrf
+                                            <button class="btn btn-danger">Отклонить</button>
+                                        </form>
+                                        @else
+                                            {{ $application->state_for_humans }}
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </table>

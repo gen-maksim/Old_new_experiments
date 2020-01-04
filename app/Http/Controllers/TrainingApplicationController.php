@@ -47,6 +47,22 @@ class TrainingApplicationController extends Controller
         return back();
     }
 
+    public function confirm(TrainingApplication $trainingApplication)
+    {
+        DB::beginTransaction();
+        auth()->user()->confirm($trainingApplication);
+        DB::commit();
+        return back();
+    }
+
+    public function decline(TrainingApplication $trainingApplication)
+    {
+        DB::beginTransaction();
+        auth()->user()->decline($trainingApplication);
+        DB::commit();
+        return back();
+    }
+
     /**
      * Display the specified resource.
      *
