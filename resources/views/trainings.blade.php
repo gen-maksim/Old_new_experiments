@@ -40,10 +40,24 @@
                         </tr>
                     @endforeach
                 </table>
-
-
             </div>
         </div>
     </div>
+    <div id="root">
+        <button @click="disabled = true" :disabled="disabled">@{{ text }}</button>
     </div>
+@endsection
+@section('js')
+<script>
+    // const app = new Vue({
+    //     el: '#app',
+    // });
+    var app_vue = new Vue({
+        el: '#root',
+        data: {
+            text: 'pop',
+            disabled: false,
+        }
+    });
+</script>
 @endsection

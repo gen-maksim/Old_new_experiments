@@ -9,8 +9,6 @@
 
     <title>{{ config('app.name', 'ClimbItMore') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -74,11 +72,16 @@
             </div>
         </div>
     </nav>
-
-    <div class="row justify-content-center" style="margin-top: 20pt">
-        @yield('content')
-    </div>
-
 </div>
+
+<div class="row justify-content-center" style="margin-top: 20pt">
+    @yield('content')
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+
 </body>
+
+<!-- Scripts -->
+<script src="{{ asset('js/app.js') }}"></script>
+@yield('js')
 </html>
