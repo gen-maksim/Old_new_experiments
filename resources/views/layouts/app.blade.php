@@ -18,9 +18,9 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-<div id="app">
+<div>
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-        <div class="container">
+        <div id="app"  class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
                 {{ config('app.name', 'ClimbItMore') }}
             </a>
@@ -83,5 +83,5 @@
 
 <!-- Scripts -->
 <script src="{{ asset('js/app.js') }}"></script>
-@yield('js')
+<script src="{{ asset('js/main.js') }}"></script>
 </html>

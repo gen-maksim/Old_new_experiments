@@ -14,6 +14,8 @@ class Training extends Model
 
     protected $fillable = ['owner_id', 'max_participants', 'description', 'start_datetime', 'duration_in_mins', 'type', 'training_place_id'];
 
+    protected $appends = ['participants_progress', 'jym_name', 'owner_name', 'can_be_applied'];
+
     protected static function boot()
     {
         parent::boot();
@@ -75,6 +77,11 @@ class Training extends Model
         return $this->applications()->where('state', 1);
     }
 
+    public function getParticipantsProgressAttribute()
+    {
+        return $this->participants()->count() . '/' . $this->max_participants . " ({$this->active_applications_count})";
+    }
+
     public function takePlace($place)
     {
         $this->training_place()->associate($place);
@@ -86,9 +93,19 @@ class Training extends Model
         return $this->belongsTo(TrainingPlace::class)->withDefault(new TrainingPlace());
     }
 
+    public function getJymNameAttribute()
+    {
+        return $this->training_place->name;
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getOwnerNameAttribute()
+    {
+        return $this->owner->name;
     }
 
     public function cancel()
@@ -99,10 +116,14 @@ class Training extends Model
         $this->delete();
     }
 
-
     public function canBeApplied()
     {
         return !$this->applications()->where('user_id', auth()->id())->where('state', '!=', 3)->exists() and $this->owner_id != auth()->id();
+    }
+
+    public function getCanBeAppliedAttribute()
+    {
+        return $this->canBeApplied();
     }
 
     /**
