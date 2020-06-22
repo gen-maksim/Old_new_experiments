@@ -11,7 +11,10 @@
                         {{ session('status') }}
                     </div>
                 @endif
+
                 <trainings-list trainings="{{ $trainings }}" store-route="{{ route('training_applications.store') }}"></trainings-list>
+
+
 {{--                <table border="1">--}}
 {{--                    <caption>Зарегистрированные тренировки</caption>--}}
 {{--                    <tr>--}}
