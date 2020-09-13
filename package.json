@@ -9,8 +9,7 @@
         "prod": "npm run production",
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
-    "dependencies": {
-        "bulma": "^0.9.0",
+    "devDependencies": {
         "axios": "^0.19",
         "bootstrap": "^4.0.0",
         "cross-env": "^5.1",
@@ -23,5 +22,9 @@
         "sass-loader": "7.*",
         "vue": "^2.6.12",
         "vue-template-compiler": "^2.6.10"
+    },
+    "dependencies": {
+        "bulma": "^0.9.0",
+        "cross-env": "^5.1"
     }
 }
