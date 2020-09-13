@@ -19,7 +19,7 @@ class TrainingController extends Controller
         $trainings = Training::all();
         $trainings->loadCount('active_applications');
 
-        return view('trainings',
+        return view('test',
             compact('trainings')
         );
     }
